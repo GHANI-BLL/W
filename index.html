@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alien UFO</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        background: radial-gradient(circle, #1b0c2e, #080313);
+        color: #fff;
+        font-family: "Orbitron", monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      #starfield {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+      .container {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+      }
+
+      /* UFO & Tractor Beam */
+      .ufo-wrap {
+        cursor: pointer;
+        animation: float 4s ease-in-out infinite;
+      }
+      .ufo-wrap img {
+        max-width: 280px;
+        width: 80vw;
+        filter: drop-shadow(0 0 20px #ff1e56);
+        transition: transform 0.3s;
+      }
+      .ufo-wrap:hover img {
+        transform: scale(1.05);
+      }
+      .beam {
+        width: 140px;
+        height: 0;
+        margin: -20px auto 0;
+        background: linear-gradient(#39ff1488, transparent);
+        clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%);
+        transition: height 0.3s;
+      }
+      .beaming .beam {
+        height: 180px;
+      }
+
+      /* Tombol & Teks */
+      button {
+        margin-top: 2rem;
+        padding: 0.7rem 1.8rem;
+        background: transparent;
+        border: 2px solid #ff2a6d;
+        color: #fff;
+        font: inherit;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 0 15px #ff2a6d66;
+      }
+      button:hover {
+        background: #ff2a6d;
+        color: #080313;
+      }
+      #msg {
+        min-height: 1.5rem;
+        margin-top: 1rem;
+        color: #05d9e8;
+        font-size: 0.9rem;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <main class="container">
+      <div class="ufo-wrap" id="ufo">
+        <img src="alien.png" alt="Alien UFO" />
+        <div class="beam"></div>
+      </div>
+      <button id="warp">WARP SPEED</button>
+      <p id="msg"></p>
+    </main>
+
+    <script>
+      // 1. Starfield Canvas
+      const cvs = document.getElementById("starfield"),
+        ctx = cvs.getContext("2d");
+      let w,
+        h,
+        stars = [];
+      const resize = () => {
+        w = cvs.width = innerWidth;
+        h = cvs.height = innerHeight;
+        stars = Array.from({ length: 120 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.5 + 0.5,
+          s: Math.random() * 0.5 + 0.2,
+        }));
+      };
+      window.onresize = resize;
+      resize();
+
+      (function loop() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "#fff";
+        stars.forEach((s) => {
+          ctx.beginPath();
+          ctx.arc(s.x, (s.y = (s.y + s.s) % h), s.r, 0, 7);
+          ctx.fill();
+        });
+        requestAnimationFrame(loop);
+      })();
+
+      // 2. Parallax UFO
+      const ufo = document.getElementById("ufo"),
+        msg = document.getElementById("msg");
+      window.onmousemove = (e) =>
+        (ufo.style.translate = `${(innerWidth / 2 - e.clientX) * -0.02}px ${(innerHeight / 2 - e.clientY) * -0.02}px`);
+
+      // 3. Audio & Beam Interaktif
+      const actx = new (window.AudioContext || window.webkitAudioContext)();
+      const playLaser = () => {
+        if (actx.state === "suspended") actx.resume();
+        const osc = actx.createOscillator(),
+          g = actx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueCurveAtTime([800, 120], actx.currentTime, 0.3);
+        g.gain.setValueCurveAtTime([0.3, 0.01], actx.currentTime, 0.3);
+        osc.connect(g).connect(actx.destination);
+        osc.start();
+        osc.stop(actx.currentTime + 0.3);
+      };
+
+      const dialogs = [
+        "👽 'Bumi terpindai!'",
+        "🛸 'Traktor beam aktif!'",
+        "📡 'Sinyal terkirim!'",
+        "✨ 'Salam damai!'",
+      ];
+      ufo.onclick = () => {
+        ufo.classList.toggle("beaming");
+        playLaser();
+        msg.textContent = dialogs[Math.floor(Math.random() * dialogs.length)];
+      };
+
+      // 4. Tombol Warp
+      document.getElementById("warp").onclick = () => {
+        stars.forEach((s) => (s.s *= 8));
+        msg.textContent = "🚀 KECEPATAN CAHAYA!";
+        setTimeout(() => {
+          stars.forEach((s) => (s.s /= 8));
+          msg.textContent = "🪐 Tiba di Alpha Centauri.";
+        }, 1000);
+      };
+    </script>
+  </body>
+</html>
