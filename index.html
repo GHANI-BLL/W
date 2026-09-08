@@ -3,85 +3,112 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alien UFO</title>
+    <title>Alien UFO Portfolio</title>
+
     <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap"
       rel="stylesheet"
     />
+
     <style>
       * {
         margin: 0;
         box-sizing: border-box;
       }
+
       body {
         min-height: 100vh;
+        padding: 2rem 1rem;
+        overflow-x: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background: radial-gradient(circle, #1b0c2e, #080313);
         color: #fff;
         font-family: "Orbitron", monospace;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
       }
+
       #starfield {
         position: fixed;
         inset: 0;
+        z-index: 0;
         pointer-events: none;
       }
+
       .container {
         position: relative;
         z-index: 1;
+        width: 100%;
+        max-width: 650px;
         text-align: center;
       }
 
-      /* UFO & Tractor Beam */
       .ufo-wrap {
+        display: inline-block;
         cursor: pointer;
         animation: float 4s ease-in-out infinite;
       }
+
       .ufo-wrap img {
-        max-width: 280px;
-        width: 80vw;
-        filter: drop-shadow(0 0 20px #ff1e56);
+        width: 70vw;
+        max-width: 260px;
+        filter: drop-shadow(0 0 20px #0471ff);
         transition: transform 0.3s;
       }
+
       .ufo-wrap:hover img {
-        transform: scale(1.05);
+        transform: scale(1.08);
       }
+
       .beam {
         width: 140px;
         height: 0;
         margin: -20px auto 0;
-        background: linear-gradient(#39ff1488, transparent);
+        background: linear-gradient(#01afff88, transparent);
         clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%);
         transition: height 0.3s;
       }
+
       .beaming .beam {
-        height: 180px;
+        height: 160px;
       }
 
-      /* Tombol & Teks */
-      button {
-        margin-top: 2rem;
-        padding: 0.7rem 1.8rem;
-        background: transparent;
-        border: 2px solid #ff2a6d;
-        color: #fff;
-        font: inherit;
-        border-radius: 50px;
-        cursor: pointer;
-        box-shadow: 0 0 15px #ff2a6d66;
+      #terminal {
+        display: none;
+        width: 100%;
+        margin: 1.5rem auto 0;
+        padding: 1.2rem;
+        border: 1px solid #05d9e8;
+        border-radius: 8px;
+        background: rgba(8, 3, 19, 0.88);
+        box-shadow:
+          0 0 15px #05d9e8,
+          inset 0 0 15px #05d9e822;
+        color: #e7ece6;
+        text-align: center;
+        font:
+          0.95rem/1.6 "Share Tech Mono",
+          monospace;
+        animation: terminalIn 0.3s ease;
       }
-      button:hover {
-        background: #ff2a6d;
-        color: #080313;
+
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        margin-left: 3px;
+        background: #05d9e8;
+        vertical-align: middle;
+        animation: blink 0.7s infinite;
       }
-      #msg {
-        min-height: 1.5rem;
+
+      #music-status {
         margin-top: 1rem;
+        min-height: 1.2rem;
         color: #05d9e8;
-        font-size: 0.9rem;
+        font:
+          0.8rem "Share Tech Mono",
+          monospace;
       }
 
       @keyframes float {
@@ -93,91 +120,205 @@
           transform: translateY(-15px);
         }
       }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes terminalIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
+
   <body>
     <canvas id="starfield"></canvas>
+
     <main class="container">
-      <div class="ufo-wrap" id="ufo">
-        <img src="alien.png" alt="Alien UFO" />
+      <div
+        class="ufo-wrap"
+        id="ufo"
+        title="Klik untuk buka atau tutup transmisi"
+      >
+        <img src="jay.png" alt="Alien UFO" />
         <div class="beam"></div>
       </div>
-      <button id="warp">WARP SPEED</button>
-      <p id="msg"></p>
+
+      <div id="terminal">
+        <span id="typed-text"></span><span class="cursor"></span>
+      </div>
+
+      <p id="music-status">Klik UFO untuk memulai musik dan transmisi.</p>
     </main>
 
-    <script>
-      // 1. Starfield Canvas
-      const cvs = document.getElementById("starfield"),
-        ctx = cvs.getContext("2d");
-      let w,
-        h,
-        stars = [];
-      const resize = () => {
-        w = cvs.width = innerWidth;
-        h = cvs.height = innerHeight;
-        stars = Array.from({ length: 120 }, () => ({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          r: Math.random() * 1.5 + 0.5,
-          s: Math.random() * 0.5 + 0.2,
-        }));
-      };
-      window.onresize = resize;
-      resize();
+    <audio id="background-music" loop preload="auto">
+      <source src="Take my mind x Show me love.mp3" type="audio/mpeg" />
+      Browser kamu tidak mendukung pemutar audio.
+    </audio>
 
-      (function loop() {
-        ctx.clearRect(0, 0, w, h);
+    <script>
+      const canvas = document.getElementById("starfield");
+      const ctx = canvas.getContext("2d");
+      const ufo = document.getElementById("ufo");
+      const terminal = document.getElementById("terminal");
+      const typedText = document.getElementById("typed-text");
+      const backgroundMusic = document.getElementById("background-music");
+      backgroundMusic.volume = 0.5;
+      const musicStatus = document.getElementById("music-status");
+
+      const portfolioText =
+        "WOIIII! HALO GUYS! Selamat datang di website JAY! Jangan lupa follow TikTok-ku sekarang! GASKANN!";
+
+      let stars = [];
+      let typingTimeout;
+      let speechTimeout;
+      let charIndex = 0;
+      let musicStarted = false;
+
+      function resize() {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+
+        stars = Array.from({ length: 120 }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5 + 0.5,
+          speed: Math.random() * 0.5 + 0.2,
+        }));
+      }
+
+      function drawStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#fff";
-        stars.forEach((s) => {
+
+        stars.forEach((star) => {
+          star.y = (star.y + star.speed) % canvas.height;
           ctx.beginPath();
-          ctx.arc(s.x, (s.y = (s.y + s.s) % h), s.r, 0, 7);
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
           ctx.fill();
         });
-        requestAnimationFrame(loop);
-      })();
 
-      // 2. Parallax UFO
-      const ufo = document.getElementById("ufo"),
-        msg = document.getElementById("msg");
-      window.onmousemove = (e) =>
-        (ufo.style.translate = `${(innerWidth / 2 - e.clientX) * -0.02}px ${(innerHeight / 2 - e.clientY) * -0.02}px`);
+        requestAnimationFrame(drawStars);
+      }
 
-      // 3. Audio & Beam Interaktif
-      const actx = new (window.AudioContext || window.webkitAudioContext)();
-      const playLaser = () => {
-        if (actx.state === "suspended") actx.resume();
-        const osc = actx.createOscillator(),
-          g = actx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueCurveAtTime([800, 120], actx.currentTime, 0.3);
-        g.gain.setValueCurveAtTime([0.3, 0.01], actx.currentTime, 0.3);
-        osc.connect(g).connect(actx.destination);
-        osc.start();
-        osc.stop(actx.currentTime + 0.3);
-      };
+      resize();
+      drawStars();
+      window.addEventListener("resize", resize);
 
-      const dialogs = [
-        "👽 'Bumi terpindai!'",
-        "🛸 'Traktor beam aktif!'",
-        "📡 'Sinyal terkirim!'",
-        "✨ 'Salam damai!'",
-      ];
-      ufo.onclick = () => {
-        ufo.classList.toggle("beaming");
-        playLaser();
-        msg.textContent = dialogs[Math.floor(Math.random() * dialogs.length)];
-      };
+      window.addEventListener("mousemove", (event) => {
+        const x = (innerWidth / 2 - event.clientX) * -0.02;
+        const y = (innerHeight / 2 - event.clientY) * -0.02;
+        ufo.style.translate = `${x}px ${y}px`;
+      });
 
-      // 4. Tombol Warp
-      document.getElementById("warp").onclick = () => {
-        stars.forEach((s) => (s.s *= 8));
-        msg.textContent = "🚀 KECEPATAN CAHAYA!";
-        setTimeout(() => {
-          stars.forEach((s) => (s.s /= 8));
-          msg.textContent = "🪐 Tiba di Alpha Centauri.";
-        }, 1000);
-      };
+      const audioContext = new (
+        window.AudioContext || window.webkitAudioContext
+      )();
+
+      function playLaser(opening) {
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const startFrequency = opening ? 200 : 800;
+        const endFrequency = opening ? 800 : 120;
+
+        oscillator.type = "sawtooth";
+        oscillator.frequency.setValueCurveAtTime(
+          [startFrequency, endFrequency],
+          audioContext.currentTime,
+          0.25,
+        );
+        gain.gain.setValueCurveAtTime(
+          [0.22, 0.01],
+          audioContext.currentTime,
+          0.25,
+        );
+
+        oscillator.connect(gain).connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.25);
+      }
+
+      function typeWriter() {
+        if (charIndex < portfolioText.length) {
+          typedText.textContent += portfolioText.charAt(charIndex);
+          charIndex++;
+          typingTimeout = setTimeout(typeWriter, 22);
+        }
+      }
+
+      function speakText() {
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(portfolioText);
+        speech.lang = "id-ID";
+        speech.rate = 1.2;
+        speech.pitch = 1.45;
+        speech.volume = 1;
+
+        speechSynthesis.speak(speech);
+      }
+
+      async function playMusic() {
+        try {
+          await backgroundMusic.play();
+          musicStarted = true;
+          musicStatus.textContent = "🎵 Musik lanjut diputar.";
+        } catch (error) {
+          musicStatus.textContent = "Klik UFO sekali lagi untuk memulai musik.";
+        }
+      }
+
+      ufo.addEventListener("click", async () => {
+        const opening = ufo.classList.toggle("beaming");
+
+        clearTimeout(typingTimeout);
+        clearTimeout(speechTimeout);
+        playLaser(opening);
+
+        if (opening) {
+          /* Saat UFO dibuka: musik dijeda, posisinya tetap tersimpan. */
+          backgroundMusic.pause();
+          musicStatus.textContent = "⏸ Musik dijeda saat transmisi terbuka.";
+
+          terminal.style.display = "block";
+          typedText.textContent = "";
+          charIndex = 0;
+          typeWriter();
+
+          speechTimeout = setTimeout(speakText, 300);
+        } else {
+          /* Saat UFO ditutup: musik lanjut dari detik terakhir, tidak mengulang. */
+          terminal.style.display = "none";
+          typedText.textContent = "";
+          charIndex = 0;
+          speechSynthesis.cancel();
+
+          await playMusic();
+        }
+      });
+
+      /* Apabila lagu selesai dan atribut loop dihapus, putar ulang dari awal. */
+      backgroundMusic.addEventListener("ended", () => {
+        backgroundMusic.currentTime = 0;
+        playMusic();
+      });
     </script>
   </body>
 </html>
