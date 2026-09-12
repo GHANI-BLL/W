@@ -1,324 +1,804 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jay</title>
+    <title>JAY // Intergalactic Transceiver Portal</title>
 
+    <!-- Modern Sci-Fi Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              neonCyan: "#05d9e8",
+              neonBlue: "#0056ff",
+              neonPink: "#ff2a85",
+              neonPurple: "#8a2be2",
+              darkSpace: "#04020a",
+            },
+            fontFamily: {
+              orbitron: ["Orbitron", "sans-serif"],
+              mono: ["Share Tech Mono", "monospace"],
+              rajdhani: ["Rajdhani", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
 
     <style>
       * {
         margin: 0;
+        padding: 0;
         box-sizing: border-box;
       }
 
       body {
-        min-height: 100vh;
-        padding: 2rem 1rem;
+        background-color: #04020a;
+        color: #e2e8f0;
         overflow-x: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: radial-gradient(circle, #1b0c2e, #080313);
-        color: #fff;
-        font-family: "Orbitron", monospace;
+        font-family: "Rajdhani", sans-serif;
+        min-height: 100vh;
       }
 
-      #starfield {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
+      .glow-cyan-text {
+        text-shadow:
+          0 0 10px rgba(5, 217, 232, 0.8),
+          0 0 20px rgba(5, 217, 232, 0.4);
       }
 
-      .container {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 650px;
-        text-align: center;
+      .glow-pink-text {
+        text-shadow:
+          0 0 10px rgba(255, 42, 133, 0.8),
+          0 0 20px rgba(255, 42, 133, 0.4);
       }
 
-      .ufo-wrap {
-        display: inline-block;
-        cursor: pointer;
-        animation: float 4s ease-in-out infinite;
+      /* UFO Hover Floating Animation */
+      .ufo-float {
+        animation: ufoHover 4s ease-in-out infinite;
       }
 
-      .ufo-wrap img {
-        width: 70vw;
-        max-width: 260px;
-        filter: drop-shadow(0 0 20px #0471ff);
-        transition: transform 0.3s;
+      @keyframes ufoHover {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-16px) rotate(1.5deg);
+        }
       }
 
-      .ufo-wrap:hover img {
-        transform: scale(1.08);
+      /* Holographic Beam Laser Effect */
+      .beam-light {
+        background: linear-gradient(
+          180deg,
+          rgba(5, 217, 232, 0.85) 0%,
+          rgba(0, 86, 255, 0.4) 45%,
+          rgba(5, 217, 232, 0) 100%
+        );
+        clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+        opacity: 0;
+        height: 0px;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transform-origin: top center;
       }
 
-      .beam {
-        width: 140px;
-        height: 0;
-        margin: -20px auto 0;
-        background: linear-gradient(#01afff88, transparent);
-        clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%);
-        transition: height 0.3s;
+      .beaming .beam-light {
+        opacity: 1;
+        height: 190px;
+        filter: drop-shadow(0 0 20px rgba(5, 217, 232, 0.8));
       }
 
-      .beaming .beam {
-        height: 160px;
+      /* Cyber grid overlay */
+      .cyber-grid {
+        background-size: 36px 36px;
+        background-image:
+          linear-gradient(
+            to right,
+            rgba(5, 217, 232, 0.04) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(5, 217, 232, 0.04) 1px,
+            transparent 1px
+          );
       }
 
-      #terminal {
-        display: none;
-        width: 100%;
-        margin: 1.5rem auto 0;
-        padding: 1.2rem;
-        border: 1px solid #05d9e8;
-        border-radius: 8px;
-        background: rgba(8, 3, 19, 0.88);
-        box-shadow:
-          0 0 15px #05d9e8,
-          inset 0 0 15px #05d9e822;
-        color: #e7ece6;
-        text-align: center;
-        font:
-          0.95rem/1.6 "Share Tech Mono",
-          monospace;
-        animation: terminalIn 0.3s ease;
+      /* CRT Scanline effect */
+      .scanlines {
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0) 50%,
+          rgba(0, 0, 0, 0.35) 50%,
+          rgba(0, 0, 0, 0.35)
+        );
+        background-size: 100% 4px;
       }
 
-      .cursor {
-        display: inline-block;
-        width: 8px;
-        height: 15px;
-        margin-left: 3px;
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #04020a;
+      }
+      ::-webkit-scrollbar-thumb {
         background: #05d9e8;
-        vertical-align: middle;
-        animation: blink 0.7s infinite;
-      }
-
-      #music-status {
-        margin-top: 1rem;
-        min-height: 1.2rem;
-        color: #05d9e8;
-        font:
-          0.8rem "Share Tech Mono",
-          monospace;
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-15px);
-        }
-      }
-
-      @keyframes blink {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0;
-        }
-      }
-
-      @keyframes terminalIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        border-radius: 4px;
       }
     </style>
   </head>
 
-  <body>
-    <canvas id="starfield"></canvas>
+  <body
+    class="relative min-h-screen flex flex-col justify-between items-center selection:bg-neonCyan selection:text-black"
+  >
+    <!-- Interactive Canvas Background -->
+    <canvas
+      id="starfield"
+      class="fixed inset-0 z-0 pointer-events-none"
+    ></canvas>
 
-    <main class="container">
+    <!-- Cyberpunk Background Overlays -->
+    <div
+      class="fixed inset-0 z-0 pointer-events-none cyber-grid opacity-70"
+    ></div>
+    <div
+      class="fixed inset-0 z-0 pointer-events-none scanlines opacity-25"
+    ></div>
+
+    <!-- HUD Top Header -->
+    <header
+      class="relative z-20 w-full max-w-5xl px-4 pt-5 flex justify-between items-center text-xs font-mono text-neonCyan/80 tracking-widest"
+    >
       <div
-        class="ufo-wrap"
-        id="ufo"
-        title="Klik untuk buka atau tutup transmisi"
+        class="flex items-center space-x-2 border border-neonCyan/30 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(5,217,232,0.15)]"
       >
-        <img src="jay.png" alt="Alien UFO" />
-        <div class="beam"></div>
+        <span
+          class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"
+        ></span>
+        <span class="font-bold">SYS.ONLINE</span>
       </div>
 
-      <div id="terminal">
-        <span id="typed-text"></span><span class="cursor"></span>
+      <div class="hidden sm:flex items-center space-x-4">
+        <span id="hud-coordinates">COORDS: 04°21'N 117°09'E</span>
+        <span class="text-neonPink font-semibold">FREQ: 1420.40 MHz</span>
       </div>
 
-      <p id="music-status">Klik UFO untuk memulai musik dan transmisi.</p>
+      <div class="flex items-center space-x-2">
+        <button
+          id="audio-toggle-btn"
+          class="border border-neonCyan/40 hover:border-neonCyan bg-neonCyan/10 hover:bg-neonCyan/20 text-neonCyan px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1.5"
+        >
+          <svg
+            id="speaker-icon"
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+            ></path>
+          </svg>
+          <span id="audio-status-label">AUDIO: SFX AKTIF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main
+      class="relative z-10 w-full max-w-2xl px-4 py-6 flex flex-col items-center my-auto"
+    >
+      <!-- Title & Subtitle Banner -->
+      <div class="text-center mb-6">
+        <h1
+          class="font-orbitron font-black text-5xl sm:text-7xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-neonCyan to-purple-500 drop-shadow-[0_0_25px_rgba(5,217,232,0.7)]"
+        >
+          J A Y
+        </h1>
+        <p
+          class="font-mono text-xs sm:text-sm text-neonCyan/80 uppercase tracking-[0.3em] mt-2"
+        >
+          ◆ TRANSMISI SISTEM ANTAR GALAKSI ◆
+        </p>
+      </div>
+
+      <!-- Jay Full Photo Avatar & Laser Beam Interaction Container -->
+      <div
+        id="ufo-container"
+        class="relative flex flex-col items-center cursor-pointer group my-2"
+      >
+        <!-- Jay Holographic Card Host Container -->
+        <div
+          id="ufo"
+          class="ufo-float transition-all duration-300 transform group-hover:scale-105 relative flex flex-col items-center justify-center"
+          title="Klik foto Jay untuk membuka/menutup sinyal transmisi!"
+        >
+          <div
+            class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center"
+          >
+            <!-- Outer Ambient Neon Aura Glow -->
+            <div
+              class="absolute inset-0 bg-gradient-to-tr from-neonCyan via-neonPink to-purple-600 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity animate-pulse"
+            ></div>
+
+            <!-- Cyberpunk Image Card Frame -->
+            <div
+              class="relative z-10 w-full h-full rounded-3xl p-1 bg-gradient-to-b from-neonCyan via-purple-500 to-neonPink shadow-[0_0_35px_rgba(5,217,232,0.6)] overflow-hidden flex items-center justify-center border border-neonCyan/50"
+            >
+              <!-- Background Ambient Layer -->
+              <div
+                class="absolute inset-0 bg-gradient-to-b from-cyan-950/40 via-purple-950/60 to-black"
+              ></div>
+
+              <!-- Jay Full Photo -->
+              <img
+                src="2a827fcf-c61a-4482-9713-a74da6a33d3d_removalai_preview.jpg"
+                onerror="
+                  this.onerror = null;
+                  this.src = 'jay.png';
+                "
+                alt="Jay Intergalactic Transmission Host"
+              />
+
+              <!-- Cyber Glass & Reflection Overlay -->
+              <div
+                class="absolute inset-0 z-20 pointer-events-none bg-gradient-to-tr from-transparent via-cyan-400/10 to-white/15 rounded-2xl"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Volumetric Hologram Light Beam -->
+        <div id="beam-wrap" class="w-full flex justify-center -mt-2">
+          <div
+            class="beam-light w-56 sm:w-72 relative overflow-hidden flex flex-col items-center justify-end"
+          >
+            <div
+              class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-400/25 via-transparent to-transparent animate-pulse"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Holographic Terminal Output Box -->
+      <div
+        id="terminal"
+        class="hidden w-full mt-2 p-5 rounded-2xl border border-neonCyan/50 bg-black/85 backdrop-blur-xl shadow-[0_0_35px_rgba(5,217,232,0.25)] text-left font-mono relative overflow-hidden"
+      >
+        <!-- Decorative Frame Corner Accents -->
+        <div
+          class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-neonCyan"
+        ></div>
+        <div
+          class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-neonCyan"
+        ></div>
+        <div
+          class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-neonCyan"
+        ></div>
+        <div
+          class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-neonCyan"
+        ></div>
+
+        <!-- Terminal Header Info -->
+        <div
+          class="flex justify-between items-center pb-3 mb-3 border-b border-neonCyan/20 text-xs text-neonCyan/70"
+        >
+          <div class="flex items-center space-x-2">
+            <span
+              class="w-2.5 h-2.5 rounded-full bg-neonPink animate-ping"
+            ></span>
+            <span class="font-bold tracking-wider text-neonPink"
+              >TRANSMISI MASUK // INCOMING DECODE</span
+            >
+          </div>
+          <span id="typing-status" class="text-neonCyan animate-pulse"
+            >DECODING...</span
+          >
+        </div>
+
+        <!-- Transmitted Message Output Area -->
+        <div
+          class="min-h-[85px] text-base sm:text-lg leading-relaxed text-slate-100 font-medium"
+        >
+          <span id="typed-text" class="glow-cyan-text"></span
+          ><span
+            id="cursor"
+            class="inline-block w-2.5 h-5 ml-1 bg-neonCyan align-middle animate-pulse"
+          ></span>
+        </div>
+
+        <!-- Action Buttons inside Terminal -->
+        <div
+          id="terminal-actions"
+          class="mt-4 pt-3 border-t border-neonCyan/20 flex flex-wrap gap-2 justify-between items-center opacity-0 transition-opacity duration-500"
+        >
+          <button
+            id="btn-replay-voice"
+            class="text-xs bg-neonCyan/10 hover:bg-neonCyan/30 border border-neonCyan/50 text-neonCyan px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition"
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+              ></path>
+            </svg>
+            <span>Ulang Suara Sinyal</span>
+          </button>
+
+          <button
+            id="btn-copy-msg"
+            class="text-xs bg-purple-500/10 hover:bg-purple-500/30 border border-purple-500/50 text-purple-300 px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition"
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              ></path>
+            </svg>
+            <span id="copy-text-label">Salin Pesan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Status Label -->
+      <div id="music-status-container" class="mt-4 text-center">
+        <p
+          id="music-status"
+          class="text-sm font-mono text-neonCyan/90 bg-black/50 border border-neonCyan/30 px-4 py-2 rounded-xl backdrop-blur-md inline-block shadow-lg"
+        >
+          📡 Klik
+          <span class="font-bold underline text-white">Foto Jay</span> untuk
+          menyalakan laser & pesan sinyal Jay!
+        </p>
+      </div>
+
+      <!-- Social Link Hub Cards -->
+      <div class="w-full mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- TikTok Card -->
+        <a
+          href="https://www.tiktok.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative overflow-hidden p-4 rounded-xl border border-neonPink/40 bg-gradient-to-r from-neonPink/10 to-transparent backdrop-blur-md hover:border-neonPink transition-all duration-300 transform hover:-translate-y-1 shadow-lg"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div
+                class="p-2.5 rounded-lg bg-neonPink/20 text-neonPink group-hover:bg-neonPink group-hover:text-black transition-colors"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path
+                    d="M12.525 2.25c.162 1.488.947 2.802 2.164 3.65 1.217.848 2.705 1.139 4.148.802v3.137a6.284 6.284 0 0 1-3.618-.895 6.302 6.302 0 0 1-2.222-2.38v8.636a6.182 6.182 0 1 1-6.182-6.182c.328 0 .653.026.974.078V12.3c-.322-.062-.647-.094-.974-.094a3.045 3.045 0 1 0 3.045 3.045V2.25h2.667z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3
+                  class="font-orbitron font-bold text-sm text-white group-hover:text-neonPink transition-colors"
+                >
+                  TIKTOK JAY
+                </h3>
+                <p class="font-mono text-xs text-slate-400">@follow_jay_now</p>
+              </div>
+            </div>
+            <span
+              class="font-mono text-xs text-neonPink font-bold group-hover:translate-x-1 transition-transform"
+              >GASKAN ➔</span
+            >
+          </div>
+        </a>
+
+        <!-- Music Playlist Card -->
+        <a
+          href="javascript:void(0)"
+          id="play-soundtrack-btn"
+          class="group relative overflow-hidden p-4 rounded-xl border border-neonCyan/40 bg-gradient-to-r from-neonCyan/10 to-transparent backdrop-blur-md hover:border-neonCyan transition-all duration-300 transform hover:-translate-y-1 shadow-lg"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div
+                class="p-2.5 rounded-lg bg-neonCyan/20 text-neonCyan group-hover:bg-neonCyan group-hover:text-black transition-colors"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path
+                    d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3
+                  class="font-orbitron font-bold text-sm text-white group-hover:text-neonCyan transition-colors"
+                >
+                  PLAYLIST GALAKSI
+                </h3>
+                <p class="font-mono text-xs text-slate-400">
+                  Take My Mind x Show Me Love
+                </p>
+              </div>
+            </div>
+            <span
+              class="font-mono text-xs text-neonCyan font-bold group-hover:translate-x-1 transition-transform"
+              >PUTAR ♫</span
+            >
+          </div>
+        </a>
+      </div>
     </main>
 
+    <!-- Footer -->
+    <footer
+      class="relative z-10 w-full text-center py-4 font-mono text-xs text-slate-500 border-t border-slate-800/60 bg-black/60 backdrop-blur-sm"
+    >
+      <p>© 2026 JAY</p>
+    </footer>
+
+    <!-- Background Music Element -->
     <audio id="background-music" loop preload="auto">
       <source src="Take my mind x Show me love.mp3" type="audio/mpeg" />
-      Browser kamu tidak mendukung pemutar audio.
     </audio>
 
     <script>
+      // Elements Selection
       const canvas = document.getElementById("starfield");
       const ctx = canvas.getContext("2d");
       const ufo = document.getElementById("ufo");
+      const ufoContainer = document.getElementById("ufo-container");
       const terminal = document.getElementById("terminal");
       const typedText = document.getElementById("typed-text");
+      const typingStatus = document.getElementById("typing-status");
+      const terminalActions = document.getElementById("terminal-actions");
+      const cursor = document.getElementById("cursor");
       const backgroundMusic = document.getElementById("background-music");
-      backgroundMusic.volume = 0.5;
       const musicStatus = document.getElementById("music-status");
+      const audioStatusLabel = document.getElementById("audio-status-label");
+      const audioToggleBtn = document.getElementById("audio-toggle-btn");
+      const playSoundtrackBtn = document.getElementById("play-soundtrack-btn");
+      const btnReplayVoice = document.getElementById("btn-replay-voice");
+      const btnCopyMsg = document.getElementById("btn-copy-msg");
+      const copyTextLabel = document.getElementById("copy-text-label");
+      const hudCoordinates = document.getElementById("hud-coordinates");
 
+      backgroundMusic.volume = 0.5;
+
+      // Sinyal Pesan Jay
       const portfolioText =
         "WOIIII! HALO GUYS! Selamat datang di website JAY! Jangan lupa follow TikTok-ku sekarang! GASKANN!";
 
       let stars = [];
+      let nebulae = [];
       let typingTimeout;
       let speechTimeout;
       let charIndex = 0;
-      let musicStarted = false;
+      let isSfxEnabled = true;
 
+      // Resizing & Dynamic Canvas Starfield Setup
       function resize() {
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        stars = Array.from({ length: 120 }, () => ({
+        stars = Array.from({ length: 140 }, () => ({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          radius: Math.random() * 1.5 + 0.5,
+          radius: Math.random() * 1.6 + 0.4,
           speed: Math.random() * 0.5 + 0.2,
+          alpha: Math.random(),
+          pulseSpeed: Math.random() * 0.02 + 0.005,
         }));
+
+        nebulae = [
+          {
+            x: canvas.width * 0.25,
+            y: canvas.height * 0.3,
+            radius: 240,
+            color: "rgba(5, 217, 232, 0.08)",
+          },
+          {
+            x: canvas.width * 0.75,
+            y: canvas.height * 0.7,
+            radius: 280,
+            color: "rgba(255, 42, 133, 0.07)",
+          },
+          {
+            x: canvas.width * 0.5,
+            y: canvas.height * 0.5,
+            radius: 200,
+            color: "rgba(138, 43, 226, 0.06)",
+          },
+        ];
       }
 
-      function drawStars() {
+      // Render Canvas Space Frame
+      function drawSpace() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#fff";
 
-        stars.forEach((star) => {
-          star.y = (star.y + star.speed) % canvas.height;
+        // Render Nebula Glows
+        nebulae.forEach((n) => {
+          const grad = ctx.createRadialGradient(
+            n.x,
+            n.y,
+            10,
+            n.x,
+            n.y,
+            n.radius,
+          );
+          grad.addColorStop(0, n.color);
+          grad.addColorStop(1, "transparent");
+          ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
           ctx.fill();
         });
 
-        requestAnimationFrame(drawStars);
+        // Render Stars
+        stars.forEach((star) => {
+          star.y = (star.y + star.speed) % canvas.height;
+          star.alpha += star.pulseSpeed;
+          if (star.alpha > 1 || star.alpha < 0.2)
+            star.pulseSpeed = -star.pulseSpeed;
+
+          ctx.save();
+          ctx.globalAlpha = Math.abs(star.alpha);
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        requestAnimationFrame(drawSpace);
       }
 
       resize();
-      drawStars();
+      drawSpace();
       window.addEventListener("resize", resize);
 
+      // Smooth Parallax Hover & Live Coordinates Simulation
       window.addEventListener("mousemove", (event) => {
-        const x = (innerWidth / 2 - event.clientX) * -0.02;
-        const y = (innerHeight / 2 - event.clientY) * -0.02;
-        ufo.style.translate = `${x}px ${y}px`;
+        const mouseX = event.clientX;
+        const mouseY = event.clientY;
+
+        const offsetX = (window.innerWidth / 2 - mouseX) * -0.025;
+        const offsetY = (window.innerHeight / 2 - mouseY) * -0.025;
+
+        ufo.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0) rotate(${offsetX * 0.1}deg)`;
+
+        if (hudCoordinates) {
+          hudCoordinates.textContent = `COORDS: ${(4.21 + mouseX * 0.0005).toFixed(2)}°N ${(117.09 + mouseY * 0.0005).toFixed(2)}°E`;
+        }
       });
 
-      const audioContext = new (
-        window.AudioContext || window.webkitAudioContext
-      )();
+      // Safe Web Audio API Synthesizer (Laser & SFX)
+      let audioContext = null;
 
-      function playLaser(opening) {
-        if (audioContext.state === "suspended") {
-          audioContext.resume();
+      function getAudioContext() {
+        if (!audioContext) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            audioContext = new AudioCtx();
+          }
         }
-
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        const startFrequency = opening ? 200 : 800;
-        const endFrequency = opening ? 800 : 120;
-
-        oscillator.type = "sawtooth";
-        oscillator.frequency.setValueCurveAtTime(
-          [startFrequency, endFrequency],
-          audioContext.currentTime,
-          0.25,
-        );
-        gain.gain.setValueCurveAtTime(
-          [0.22, 0.01],
-          audioContext.currentTime,
-          0.25,
-        );
-
-        oscillator.connect(gain).connect(audioContext.destination);
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.25);
+        if (audioContext && audioContext.state === "suspended") {
+          audioContext.resume().catch(() => {});
+        }
+        return audioContext;
       }
 
+      function playCyberLaser(opening) {
+        if (!isSfxEnabled) return;
+        try {
+          const ctx = getAudioContext();
+          if (!ctx) return;
+
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          const startFreq = opening ? 200 : 850;
+          const endFreq = opening ? 850 : 120;
+
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(startFreq, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(
+            endFreq,
+            ctx.currentTime + 0.25,
+          );
+
+          gain.gain.setValueAtTime(0.18, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        } catch (err) {
+          // Safe fail-safe if Web Audio API is restricted
+        }
+      }
+
+      function playTypeClickSFX() {
+        if (!isSfxEnabled) return;
+        try {
+          const ctx = getAudioContext();
+          if (!ctx) return;
+
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(
+            700 + Math.random() * 300,
+            ctx.currentTime,
+          );
+
+          gain.gain.setValueAtTime(0.02, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start();
+          osc.stop(ctx.currentTime + 0.03);
+        } catch (err) {}
+      }
+
+      // Typewriter Typing Logic
       function typeWriter() {
         if (charIndex < portfolioText.length) {
           typedText.textContent += portfolioText.charAt(charIndex);
           charIndex++;
-          typingTimeout = setTimeout(typeWriter, 22);
+          playTypeClickSFX();
+          typingTimeout = setTimeout(typeWriter, 30);
+        } else {
+          typingStatus.textContent = "TRANSMISSION COMPLETE";
+          typingStatus.classList.remove("animate-pulse");
+          cursor.classList.add("hidden");
+          terminalActions.classList.remove("opacity-0");
         }
       }
 
+      // Speech Synthesis Utterance (Speech Voice)
       function speakText() {
-        speechSynthesis.cancel();
+        if ("speechSynthesis" in window) {
+          try {
+            window.speechSynthesis.cancel();
+            const speech = new SpeechSynthesisUtterance(portfolioText);
+            speech.lang = "id-ID";
+            speech.rate = 1.15;
+            speech.pitch = 1.35;
+            speech.volume = 1;
 
-        const speech = new SpeechSynthesisUtterance(portfolioText);
-        speech.lang = "id-ID";
-        speech.rate = 1.2;
-        speech.pitch = 1.45;
-        speech.volume = 1;
-
-        speechSynthesis.speak(speech);
-      }
-
-      async function playMusic() {
-        try {
-          await backgroundMusic.play();
-          musicStarted = true;
-          musicStatus.textContent = "🎵 Musik lanjut diputar.";
-        } catch (error) {
-          musicStatus.textContent = "Klik UFO sekali lagi untuk memulai musik.";
+            window.speechSynthesis.speak(speech);
+          } catch (e) {}
         }
       }
 
-      ufo.addEventListener("click", async () => {
-        const opening = ufo.classList.toggle("beaming");
+      // Safe Music Player Handler
+      async function toggleMusic(forcePlay = false) {
+        try {
+          if (backgroundMusic.paused || forcePlay) {
+            const playPromise = backgroundMusic.play();
+            if (playPromise !== undefined) {
+              await playPromise;
+              musicStatus.innerHTML =
+                "🎵 <b>PLAYLIST AKTIF:</b> Musik Jay sedang diputar...";
+            }
+          } else {
+            backgroundMusic.pause();
+            musicStatus.innerHTML =
+              "⏸️ <b>MUSIK DIJEDA.</b> Klik foto Jay untuk melanjutkan sinyal.";
+          }
+        } catch (err) {
+          musicStatus.innerHTML =
+            "📡 Sinyal Jay aktif! Klik di mana saja untuk memutar musik.";
+        }
+      }
+
+      // Click Interaction Handler on UFO Container
+      ufoContainer.addEventListener("click", async () => {
+        getAudioContext();
+        const isOpening = ufoContainer.classList.toggle("beaming");
 
         clearTimeout(typingTimeout);
         clearTimeout(speechTimeout);
-        playLaser(opening);
+        playCyberLaser(isOpening);
 
-        if (opening) {
-          /* Saat UFO dibuka: musik dijeda, posisinya tetap tersimpan. */
-          backgroundMusic.pause();
-          musicStatus.textContent =
-            "ʙᴜᴋᴀ ᴅɪ ʙʀᴏᴡꜱᴇʀ ᴜɴᴛᴜᴋ ᴅᴇɴɢᴀʀᴋᴀɴ ᴘʟᴀʏʟɪꜱᴛ ʙɢ ᴊᴀʏ";
+        if (isOpening) {
+          // Temporarily pause background music while terminal speech decodes
+          try {
+            backgroundMusic.pause();
+          } catch (e) {}
+          musicStatus.innerHTML =
+            "📡 <b>MENGHUBUNGKAN SINYAL JAY...</b> Menyerap transmisi!";
 
           terminal.style.display = "block";
           typedText.textContent = "";
+          cursor.classList.remove("hidden");
+          terminalActions.classList.add("opacity-0");
+          typingStatus.textContent = "DECODING...";
+          typingStatus.classList.add("animate-pulse");
+
           charIndex = 0;
           typeWriter();
 
-          speechTimeout = setTimeout(speakText, 300);
+          speechTimeout = setTimeout(speakText, 350);
         } else {
-          /* Saat UFO ditutup: musik lanjut dari detik terakhir, tidak mengulang. */
           terminal.style.display = "none";
           typedText.textContent = "";
           charIndex = 0;
-          speechSynthesis.cancel();
+          if ("speechSynthesis" in window) {
+            try {
+              window.speechSynthesis.cancel();
+            } catch (e) {}
+          }
 
-          await playMusic();
+          await toggleMusic(true);
         }
       });
 
-      /* Apabila lagu selesai dan atribut loop dihapus, putar ulang dari awal. */
-      backgroundMusic.addEventListener("ended", () => {
-        backgroundMusic.currentTime = 0;
-        playMusic();
+      // Custom Button Actions
+      btnReplayVoice.addEventListener("click", (e) => {
+        e.stopPropagation();
+        speakText();
+      });
+
+      btnCopyMsg.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = portfolioText;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+
+        copyTextLabel.textContent = "Tersalin!";
+        setTimeout(() => {
+          copyTextLabel.textContent = "Salin Pesan";
+        }, 2000);
+      });
+
+      playSoundtrackBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleMusic();
+      });
+
+      audioToggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        isSfxEnabled = !isSfxEnabled;
+        audioStatusLabel.textContent = isSfxEnabled
+          ? "AUDIO: SFX AKTIF"
+          : "AUDIO: MUTED";
+        audioToggleBtn.classList.toggle("opacity-50", !isSfxEnabled);
       });
     </script>
   </body>
